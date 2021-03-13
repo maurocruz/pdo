@@ -1,0 +1,13 @@
+{
+    "name": "mauro/pdo",
+    "description": "Connection to database",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mauro Cruz",
+            "email": "maurocruz@pirenopolis.tur.br"
+        }
+    ],
+    "require": {}
+}
