@@ -1,5 +1,5 @@
 {
-    "name": "mauro/pdo",
+    "name": "plinct/pdo",
     "description": "Connection to database",
     "type": "library",
     "license": "MIT",
@@ -9,5 +9,12 @@
             "email": "maurocruz@pirenopolis.tur.br"
         }
     ],
-    "require": {}
+    "require": {
+        "php": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Plinct\\PDO\\": "src/"
+        }
+    }
 }
