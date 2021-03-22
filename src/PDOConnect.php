@@ -5,16 +5,16 @@ use PDO;
 use PDOException;
 
 class PDOConnect {
-    private static $PDOConnect;
-    private static $DRIVER;
-    private static $HOST;
-    private static $DBNAME;
-    private static $USER_PUBLIC;
-    private static $PASSWORD_PUBLIC;
-    private static $USERNAME_ADMIN;
-    private static $EMAIL_ADMIN;
-    private static $PASSWORD_ADMIN;
-    private static $ERROR;
+    private static ?object $PDOConnect;
+    private static string $DRIVER;
+    private static string $HOST;
+    private static string $DBNAME;
+    private static string $USER_PUBLIC;
+    private static string $PASSWORD_PUBLIC;
+    private static string $USERNAME_ADMIN;
+    private static string $EMAIL_ADMIN;
+    private static string $PASSWORD_ADMIN;
+    private static object $ERROR;
 
     /**
      * @param $driver
@@ -29,22 +29,20 @@ class PDOConnect {
         self::$DRIVER = $driver;
         self::$HOST = $host;
         self::$DBNAME = $dbname;
-        if(self::$PDOConnect == null) {
-            $default_options = [
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => true
-            ];
-            $options = array_replace($default_options, $options);
-            $dsn = $driver . ":host=" . $host . ";dbname=" . $dbname;
-            try {
-                $PDOConnect = new PDO($dsn, $username, $password, $options);
-            } catch (PDOException $e) {
-                self::$ERROR = $e;
-                $PDOConnect = self::getError();
-            } finally {
-                self::$PDOConnect = $PDOConnect;
-            }
+        $default_options = [
+            PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => true
+        ];
+        $options = array_replace($default_options, $options);
+        $dsn = $driver . ":host=" . $host . ";dbname=" . $dbname;
+        try {
+            $PDOConnect = new PDO($dsn, $username, $password, $options);
+        } catch (PDOException $e) {
+            self::$ERROR = $e;
+            $PDOConnect = self::getError();
+        } finally {
+            self::$PDOConnect = $PDOConnect;
         }
         return self::$PDOConnect;
     }
@@ -63,31 +61,31 @@ class PDOConnect {
         return null;
     }
 
-    public static function getPDOConnect() {
+    public static function getPDOConnect(): ?object {
         return self::$PDOConnect;
     }
 
-    public static function getDrive() {
+    public static function getDrive(): string {
         return self::$DRIVER;
     }
 
-    public static function getHost() {
+    public static function getHost(): string {
         return self::$HOST;
     }
 
-    public static function getDbname() {
+    public static function getDbname(): string {
         return self::$DBNAME;
     }
 
-    public static function getUsernameAdmin() {
+    public static function getUsernameAdmin(): string {
         return self::$USERNAME_ADMIN;
     }
 
-    public static function getEmailAdmin() {
+    public static function getEmailAdmin(): string {
         return self::$EMAIL_ADMIN;
     }
 
-    public static function getPasswordAdmin() {
+    public static function getPasswordAdmin(): string {
         return self::$PASSWORD_ADMIN;
     }
 
@@ -129,7 +127,7 @@ class PDOConnect {
         $errorInfo = null;
         $connect = self::$PDOConnect;
         try {
-            if ($connect && !array_key_exists('error', $connect)) {
+            if ($connect && !isset($connect->error)) {
                 $q = $connect->prepare($query);
                 $q->setFetchMode(PDO::FETCH_ASSOC);
                 $q->execute($args);
@@ -143,8 +141,8 @@ class PDOConnect {
                 throw new PDOException();
             }
         } catch (PDOException $e) {
-            if(array_key_exists('error', $connect)) {
-                return $connect;
+            if(isset($connect->error)) {
+                return (array) $connect;
             } elseif ($errorInfo !== '0000') {
                 return [ "error" => [
                     "message" => $errorInfo[2],
