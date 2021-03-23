@@ -2,7 +2,7 @@
 namespace Plinct\PDO;
 
 class Crud {
-    protected $table;
+    protected string $table;
 
     /**
      * READ
