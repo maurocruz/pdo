@@ -2,7 +2,7 @@
     "name": "plinct/pdo",
     "description": "Connection to database",
     "type": "library",
-    "license": "MIT",
+    "license": "proprietary",
     "authors": [
         {
             "name": "Mauro Cruz",
@@ -10,7 +10,10 @@
         }
     ],
     "require": {
-        "php": "^7.2"
+        "php": "^7.3"
+    },
+    "require-dev" : {
+        "ext-pdo": "*"
     },
     "autoload": {
         "psr-4": {

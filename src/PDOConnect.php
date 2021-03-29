@@ -5,14 +5,14 @@ use PDO;
 use PDOException;
 
 class PDOConnect {
-    private static ?object $PDOConnect;
-    private static string $DRIVER;
-    private static string $HOST;
-    private static string $DBNAME;
-    private static string $USERNAME;
-    private static string $EMAIL;
-    private static string $PASSWORD;
-    private static object $ERROR;
+    private static $PDOConnect;
+    private static  $DRIVER;
+    private static  $HOST;
+    private static  $DBNAME;
+    private static  $USERNAME;
+    private static  $EMAIL;
+    private static  $PASSWORD;
+    private static  $ERROR;
 
     /**
      * @param $driver
