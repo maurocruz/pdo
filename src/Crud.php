@@ -84,7 +84,7 @@ class Crud {
         if (empty($run)) {
             return [ "message" => "Deleted successfully" ];
         } else {
-            return [ "message" => "unsuccess delete" ];
+            return [ "message" => "Unsuccess delete", "query" => $query ];
         }
     }
 }
