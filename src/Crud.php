@@ -16,7 +16,7 @@ class Crud {
      * @return array
      */
     protected function read(string $field = "*", string $where = null, string $groupBy = null, string $orderBy = null, $limit = null, $offset = null, array $args = null): array {
-        $query = "SELECT $field FROM `$this->table`";
+        $query = "SELECT $field FROM $this->table";
         $query .= $where ? " WHERE $where" : null;
         $query .= $groupBy ? " GROUP BY $groupBy" : null;
         $query .= $orderBy ? " ORDER BY $orderBy" : null;
@@ -45,7 +45,7 @@ class Crud {
         }
         $columns = implode(",", $names);
         $rows = implode(",", $values);
-        $query = "INSERT INTO `$this->table` ($columns) VALUES ($rows)";
+        $query = "INSERT INTO $this->table ($columns) VALUES ($rows)";
         return PDOConnect::run($query, $bindValues);
     }
     /**
@@ -77,14 +77,14 @@ class Crud {
      * @return array
      */
     protected function erase(string $where, $limit = null): array {
-        $query = "DELETE FROM `" . $this->table . "` WHERE $where";
+        $query = "DELETE FROM $this->table WHERE $where";
         $query .= $limit ? " LIMIT $limit" : null;
         $query .= ";";
         $run = PDOConnect::run($query);
         if (empty($run)) {
             return [ "message" => "Deleted successfully" ];
         } else {
-            return [ "message" => "Unsuccess delete", "query" => $query ];
+            return $run;
         }
     }
 }
