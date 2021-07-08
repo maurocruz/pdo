@@ -65,7 +65,7 @@ class Crud {
             $names[] = "`$key`=?";
             $bindValues[] = $value;
         }
-        $query = "UPDATE `" . $this->table . "` SET ";
+        $query = "UPDATE `$this->table` SET ";
         $query .= implode(",", $names);
         $query .= " WHERE $where;";
         return PDOConnect::run($query, $bindValues);
@@ -77,7 +77,7 @@ class Crud {
      * @return array
      */
     protected function erase(string $where, $limit = null): array {
-        $query = "DELETE FROM `" . $this->table . "` WHERE $where";
+        $query = "DELETE FROM `$this->table` WHERE $where";
         $query .= $limit ? " LIMIT $limit" : null;
         $query .= ";";
         $run = PDOConnect::run($query);
