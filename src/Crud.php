@@ -1,8 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Plinct\PDO;
 
-class Crud {
-    protected $table;
+class Crud
+{
+    protected string $table;
 
     /**
      * READ
@@ -25,6 +29,7 @@ class Crud {
         $query .= ";";
         return PDOConnect::run($query, $args);
     }
+
     /**
      * CREATED
      * @param array $data
@@ -48,6 +53,7 @@ class Crud {
         $query = "INSERT INTO $this->table ($columns) VALUES ($rows)";
         return PDOConnect::run($query, $bindValues);
     }
+
     /**
      * UPDATE
      * @param array $data
@@ -65,11 +71,10 @@ class Crud {
             $names[] = "`$key`=?";
             $bindValues[] = $value;
         }
-        $query = "UPDATE `$this->table` SET ";
-        $query .= implode(",", $names);
-        $query .= " WHERE $where;";
+        $query = "UPDATE `$this->table` SET " . implode(",", $names) . " WHERE $where;";
         return PDOConnect::run($query, $bindValues);
     }
+
     /**
      * DELETE
      * @param string $where
