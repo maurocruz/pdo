@@ -6,6 +6,9 @@ namespace Plinct\PDO;
 
 class Crud
 {
+    /**
+     * @var string
+     */
     protected string $table;
 
     /**
@@ -19,7 +22,16 @@ class Crud
      * @param array|null $args
      * @return array
      */
-    protected function read(string $field = "*", string $where = null, string $groupBy = null, string $orderBy = null, $limit = null, $offset = null, array $args = null): array {
+    protected function read(
+        string $field = "*",
+        string $where = null,
+        string $groupBy = null,
+        string $orderBy = null,
+        $limit = null,
+        $offset = null, array
+        $args = null
+    ): array
+    {
         $query = "SELECT $field FROM $this->table";
         $query .= $where ? " WHERE $where" : null;
         $query .= $groupBy ? " GROUP BY $groupBy" : null;
@@ -35,7 +47,8 @@ class Crud
      * @param array $data
      * @return array
      */
-    protected function created(array $data): array {
+    protected function created(array $data): array
+    {
         $names = null;
         $values = null;
         $bindValues = null;
@@ -60,7 +73,8 @@ class Crud
      * @param string $where
      * @return array
      */
-    protected function update(array $data, string $where): array {
+    protected function update(array $data, string $where): array
+    {
         $names = null;
         $bindValues = null;
         if (empty($data)) {
@@ -71,7 +85,8 @@ class Crud
             $names[] = "`$key`=?";
             $bindValues[] = $value;
         }
-        $query = "UPDATE `$this->table` SET " . implode(",", $names) . " WHERE $where;";
+        $namesString = implode(",", $names);
+        $query = "UPDATE `$this->table` SET $namesString WHERE $where;";
         return PDOConnect::run($query, $bindValues);
     }
 
@@ -81,7 +96,8 @@ class Crud
      * @param null $limit
      * @return array
      */
-    protected function erase(string $where, $limit = null): array {
+    protected function erase(string $where, $limit = null): array
+    {
         $query = "DELETE FROM `$this->table` WHERE $where";
         $query .= $limit ? " LIMIT $limit" : null;
         $query .= ";";
