@@ -1,17 +1,41 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Plinct\PDO;
 
 use PDO;
 use PDOException;
 
-class PDOConnect {
+class PDOConnect
+{
+    /**
+     * @var
+     */
     private static $PDOConnect;
+    /**
+     * @var
+     */
     private static  $DRIVER;
+    /**
+     * @var
+     */
     private static  $HOST;
+    /**
+     * @var
+     */
     private static  $DBNAME;
+    /**
+     * @var
+     */
     private static  $USERNAME;
-    private static  $EMAIL;
+    /**
+     * @var
+     */
     private static  $PASSWORD;
+    /**
+     * @var
+     */
     private static  $ERROR;
 
     /**
@@ -23,7 +47,8 @@ class PDOConnect {
      * @param array $options
      * @return array[]|PDO
      */
-    public static function connect($driver, $host, $dbname, $username, $password, $options = []) {
+    public static function connect($driver, $host, $dbname, $username, $password, array $options = [])
+    {
         self::$DRIVER = $driver;
         self::$HOST = $host;
         self::$DBNAME = $dbname;
@@ -47,11 +72,19 @@ class PDOConnect {
         return self::$PDOConnect;
     }
 
-    public static function disconnect() {
+    /**
+     *
+     */
+    public static function disconnect()
+    {
         self::$PDOConnect = null;
     }
 
-    public static function getError(): ?array {
+    /**
+     * @return array[]|null
+     */
+    public static function getError(): ?array
+    {
         if (self::$ERROR) {
             return [ "error" => [
                 "message" => self::$ERROR->getMessage(),
@@ -61,45 +94,71 @@ class PDOConnect {
         return null;
     }
 
-    public static function getPDOConnect(): ?object {
+    /**
+     * @return object|null
+     */
+    public static function getPDOConnect(): ?object
+    {
         return self::$PDOConnect;
     }
 
-    public static function getDrive(): string {
+    /**
+     * @return string
+     */
+    public static function getDrive(): string
+    {
         return self::$DRIVER;
     }
 
-    public static function getHost(): string {
+    /**
+     * @return string
+     */
+    public static function getHost(): string
+    {
         return self::$HOST;
     }
 
-    public static function getDbname(): string {
+    /**
+     * @return string
+     */
+    public static function getDbname(): string
+    {
         return self::$DBNAME;
     }
 
-    public static function setUsername($username) {
+    /**
+     * @param $username
+     */
+    public static function setUsername($username)
+    {
         self::$USERNAME = $username;
     }
 
-    public static function setEmail($emailAdmin) {
-        self::$EMAIL = $emailAdmin;
-    }
-
-    public static function setPassword($password) {
+    /**
+     * @param $password
+     */
+    public static function setPassword($password)
+    {
         self::$PASSWORD = $password;
     }
 
-    public static function reconnect($username = null, $password = null) {
+    /**
+     * @param null $username
+     * @param null $password
+     */
+    public static function reconnect($username = null, $password = null)
+    {
         self::disconnect();
         self::connect(self::$DRIVER, self::$HOST, self::$DBNAME, $username ?? self::$USERNAME, $password ?? self::$PASSWORD);
     }
+
     /**
      * @param $query
      * @param null $args
      * @return array[]
      */
-    public static function run($query, $args = NULL): array {
-        $errorInfo = null;
+    public static function run($query, $args = NULL): array
+    {
         $connect = self::$PDOConnect;
         try {
             if ($connect && !isset($connect->error)) {
@@ -118,20 +177,16 @@ class PDOConnect {
         } catch (PDOException $e) {
             if(isset($connect->error)) {
                 return (array) $connect;
-            } elseif ($errorInfo !== '0000') {
-                return [ "error" => [
-                    "message" => $errorInfo[2],
-                    "code" => $errorInfo[1],
-                    "query" => $query
-                ] ];
             } else {
                 return [ "error" => [
                     "message" => $e->getMessage(),
-                    "code" => $e->getCode()
+                    "code" => $e->getCode(),
+                    "query" => $query
                 ] ];
             }
         }
     }
+
     /**
      * LAST INSERT ID
      */
