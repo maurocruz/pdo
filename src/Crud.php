@@ -63,7 +63,7 @@ class Crud
         }
         $columns = implode(",", $names);
         $rows = implode(",", $values);
-        $query = "INSERT INTO $this->table ($columns) VALUES ($rows)";
+        $query = "INSERT INTO `$this->table` ($columns) VALUES ($rows)";
         return PDOConnect::run($query, $bindValues);
     }
 
