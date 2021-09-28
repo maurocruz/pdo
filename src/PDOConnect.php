@@ -4,39 +4,40 @@ declare(strict_types=1);
 
 namespace Plinct\PDO;
 
+use Exception;
 use PDO;
 use PDOException;
 
 class PDOConnect
 {
     /**
-     * @var
+     * @var PDO|null
      */
-    private static $PDOConnect;
+    private static ?PDO $PDOConnect = null;
     /**
-     * @var
+     * @var ?PDOException
      */
-    private static  $DRIVER;
+    private static ?PDOException $ERROR = null;
     /**
-     * @var
+     * @var string
      */
-    private static  $HOST;
+    private static string $DRIVER;
     /**
-     * @var
+     * @var string
      */
-    private static  $DBNAME;
+    private static string $HOST;
     /**
-     * @var
+     * @var string
      */
-    private static  $USERNAME;
+    private static string $DBNAME;
     /**
-     * @var
+     * @var string
      */
-    private static  $PASSWORD;
+    private static string $USERNAME;
     /**
-     * @var
+     * @var string
      */
-    private static  $ERROR;
+    private static string $PASSWORD;
 
     /**
      * @param $driver
@@ -45,7 +46,7 @@ class PDOConnect
      * @param $username
      * @param $password
      * @param array $options
-     * @return array[]|PDO
+     * @return Exception|PDO|PDOException
      */
     public static function connect($driver, $host, $dbname, $username, $password, array $options = [])
     {
@@ -63,13 +64,12 @@ class PDOConnect
         $dsn = $driver . ":host=" . $host . ";dbname=" . $dbname;
         try {
             $PDOConnect = new PDO($dsn, $username, $password, $options);
+            self::$PDOConnect = $PDOConnect;
         } catch (PDOException $e) {
             self::$ERROR = $e;
-            $PDOConnect = self::getError();
         } finally {
-            self::$PDOConnect = $PDOConnect;
+            return self::$PDOConnect ?? self::$ERROR;
         }
-        return self::$PDOConnect;
     }
 
     /**
@@ -78,6 +78,11 @@ class PDOConnect
     public static function disconnect()
     {
         self::$PDOConnect = null;
+    }
+
+    public static function testConnection(): bool
+    {
+        return (bool)self::$PDOConnect;
     }
 
     /**
@@ -127,6 +132,22 @@ class PDOConnect
     }
 
     /**
+     * @return string
+     */
+    public static function getUsername(): string
+    {
+        return self::$USERNAME;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getPassword(): string
+    {
+        return self::$PASSWORD;
+    }
+
+    /**
      * @param $username
      */
     public static function setUsername($username)
@@ -159,31 +180,36 @@ class PDOConnect
      */
     public static function run($query, $args = NULL): array
     {
-        $connect = self::$PDOConnect;
-        try {
-            if ($connect && !isset($connect->error)) {
-                $q = $connect->prepare($query);
-                $q->setFetchMode(PDO::FETCH_ASSOC);
-                $q->execute($args);
-                $errorInfo = $q->errorInfo();
-                if ($errorInfo[0] == "0000") {
-                    return $q->fetchAll();
+        if(self::$PDOConnect) {
+            $connect = self::$PDOConnect;
+
+            try {
+                if ($connect && !isset($connect->error)) {
+                    $q = $connect->prepare($query);
+                    $q->setFetchMode(PDO::FETCH_ASSOC);
+                    $q->execute($args);
+                    $errorInfo = $q->errorInfo();
+                    if ($errorInfo[0] == "0000") {
+                        return $q->fetchAll();
+                    } else {
+                        throw new PDOException();
+                    }
                 } else {
                     throw new PDOException();
                 }
-            } else {
-                throw new PDOException();
+            } catch (PDOException $e) {
+                if (isset($connect->error)) {
+                    return (array)$connect;
+                } else {
+                    return ["error" => [
+                        "message" => $e->getMessage(),
+                        "code" => $e->getCode(),
+                        "query" => $query
+                    ]];
+                }
             }
-        } catch (PDOException $e) {
-            if(isset($connect->error)) {
-                return (array) $connect;
-            } else {
-                return [ "error" => [
-                    "message" => $e->getMessage(),
-                    "code" => $e->getCode(),
-                    "query" => $query
-                ] ];
-            }
+        } else {
+            return self::getError();
         }
     }
 
