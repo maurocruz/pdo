@@ -12,6 +12,16 @@ class Crud
     protected string $table;
 
     /**
+     * @param string $table
+     * @return Crud
+     */
+    public function setTable(string $table): Crud
+    {
+        $this->table = $table;
+        return $this;
+    }
+
+    /**
      * READ
      * @param string $field
      * @param string|null $where
@@ -22,7 +32,7 @@ class Crud
      * @param array|null $args
      * @return array
      */
-    protected function read(
+    public function read(
         string $field = "*",
         string $where = null,
         string $groupBy = null,
@@ -32,7 +42,7 @@ class Crud
         $args = null
     ): array
     {
-        $query = "SELECT $field FROM $this->table";
+        $query = "SELECT $field FROM `$this->table`";
         $query .= $where ? " WHERE $where" : null;
         $query .= $groupBy ? " GROUP BY $groupBy" : null;
         $query .= $orderBy ? " ORDER BY $orderBy" : null;
@@ -47,7 +57,7 @@ class Crud
      * @param array $data
      * @return array
      */
-    protected function created(array $data): array
+    public function created(array $data): array
     {
         $names = null;
         $values = null;
@@ -73,7 +83,7 @@ class Crud
      * @param string $where
      * @return array
      */
-    protected function update(array $data, string $where): array
+    public function update(array $data, string $where): array
     {
         $names = null;
         $bindValues = null;
@@ -96,7 +106,7 @@ class Crud
      * @param null $limit
      * @return array
      */
-    protected function erase(string $where, $limit = null): array
+    public function erase(string $where, $limit = null): array
     {
         $query = "DELETE FROM `$this->table` WHERE $where";
         $query .= $limit ? " LIMIT $limit" : null;
